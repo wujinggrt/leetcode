@@ -28,12 +28,15 @@ class LFUCache {
         auto nextCountIt = countIt;
         ++nextCountIt;
         // 到达末尾或者下一个count被删除
-        if (nextCountIt == counts_.end() || nextCountIt->count != countIt->count + 1) {
-            nextCountIt = counts_.insert(nextCountIt, CountNode{countIt->count + 1});
+        if (nextCountIt == counts_.end() ||
+            nextCountIt->count != countIt->count + 1) {
+            nextCountIt =
+                counts_.insert(nextCountIt, CountNode{countIt->count + 1});
         }
         // 插入新的count列表，更新values_中的值和KeyNode中的值，删除原来keys中的节点
         keyIt->countIt = nextCountIt;
-        it->second.keyIt = nextCountIt->keys.insert(nextCountIt->keys.end(), *keyIt);
+        it->second.keyIt =
+            nextCountIt->keys.insert(nextCountIt->keys.end(), *keyIt);
         keys.erase(keyIt);
         // 移除节点后，如果链表空了，删除整个链表
         if (keys.empty()) {
@@ -42,10 +45,8 @@ class LFUCache {
     }
 
 public:
-    LFUCache(int capacity) : maxSize_{capacity} {
+    LFUCache(int capacity) : maxSize_{capacity} {}
 
-    }
-    
     int get(int key) {
         auto it = values_.find(key);
         if (it == values_.end()) {
@@ -54,13 +55,13 @@ public:
         incCount(it);
         return it->second.value;
     }
-    
+
     void put(int key, int value) {
         auto it = values_.find(key);
         if (it != values_.end()) {
             it->second.value = value;
             incCount(it);
-            return ;
+            return;
         }
         if (values_.size() == maxSize_) {
             // 移除出现最少的节点
