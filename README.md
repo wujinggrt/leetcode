@@ -84,12 +84,12 @@ Tag：栈 (最优)，DP
 - 从左往右扫描时，以 left 必须大于等于 right。否则右侧括号，找不到左括号来匹配。 但是，从左往右扫描，会漏掉一种情况。比如 "()(()" 总是满足 left >= right，但长度是 2 所以需要从右扫描一遍。
 - 从右向左扫描。一左一右，将两个情况左右限制在最大值上。
 
-## 33 搜索旋转排序数组：
+## 33 搜索旋转排序数组：二分查找状态机
 
 数组有序，但是可能向左或向右 rotate 了。比如 [4 5 6 7 0 1 2]。
 
 使用二分查找。二分后，得到 mid，需要确定，值是在 mid 的左侧还是右侧。考虑**状态机**。我们定义跨越点下标 leap 是最小值点，且此最小值左最大值。如果不存在如此的值，那么数组单调增加。如果 nums[0] < nums[-1]，代表使用二分查找即可。或是用哨兵思想，在左侧插入无穷大，但是复杂化了。二分区间 [left:right] 时，下标 mid 有如下情况：
-- 情况 1：nums[left] > nums[mid]。跨越点在 mid 左侧区间 [left, mid)，数组单调递增序列包含 [left:leap] 和 [leap:mid] [mid:right]。
+- 情况 1：nums[left] > nums[mid]。左侧区间不单调。跨越点在 mid 左侧区间 [left, mid)，数组单调递增序列包含 [left:leap] 和 [leap:mid] [mid:right]。
 - 情况 2：nums[left] < nums[mid] and nums[right-1] < nums[mid]，跨越点在 mid 右侧区间 [mid:right]。单调递增区间包含 [left:mid], [mid:leap] 和 [leap:right]。
 - 情况 3：nums[left] < nums[mid] and nums[mid] < nums[right-1]，区间有序，无跨越点。执行二分即可。
 
@@ -97,7 +97,10 @@ Tag：栈 (最优)，DP
 
 [python code](./py/0033.py)
 
-- [ ] 34
+## 34 搜索有重复元素旋转排序数组：二分查找，lower_bound upper_bound
+
+lower_bound，找到第一个不小于 target 的元素。upper_bound，找到第一个大于 target 的元素。
+
 - [ ] 39
 - [ ] 40
 - [ ] 41

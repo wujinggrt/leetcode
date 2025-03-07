@@ -8,7 +8,7 @@ class Solution:
             mid_num = nums[mid]
             if mid_num == target:
                 return mid
-            elif nums[left] > mid_num:
+            if nums[left] > mid_num:
                 # [left:mid] 有两个递增区间, [mid:right] 有一个递增区间
                 if mid_num <= target and target < nums[left]:
                     # 单个区间情况会轻松。注意，需要 + 1
@@ -24,7 +24,7 @@ class Solution:
             else:
                 # sorted, and find the lower_bound
                 if mid_num < target:
-                    left = mid + 1
+                    left = mid + 1 # 要找到第一个不小于的，[left:mid] 都小于 target
                 else:
                     right = mid
         return left if left != len(nums) and nums[left] == target else -1
