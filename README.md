@@ -97,9 +97,11 @@ Tag：栈 (最优)，DP
 
 [python code](./py/0033.py)
 
-## 34 搜索有重复元素旋转排序数组：二分查找，lower_bound upper_bound
+## 34 搜索有重复元素的有序数组：二分查找，lower_bound upper_bound
 
 lower_bound，找到第一个不小于 target 的元素。upper_bound，找到第一个大于 target 的元素。
+
+[py code](./py/0034.py)
 
 - [ ] 39
 - [ ] 40
