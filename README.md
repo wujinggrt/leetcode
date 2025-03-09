@@ -177,7 +177,6 @@ class Solution:
 
 不能重复使用同一个下标元素了，因为包含了重复数字。
 
-
 ```py
     def dfs(self, i: int, target: int):
         if target == 0:
@@ -193,14 +192,6 @@ class Solution:
             self.track.append(num)
             self.dfs(j, target - num)
             self.track.pop()
-
-    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
-        self.candidates = candidates
-        self.candidates.sort()
-        self.track = list()
-        self.combinations = list()
-        self.dfs(-1, target)
-        return self.combinations
 ```
 
 注意 dfs()，使用了 previous 变量，保障在重复元素相邻（有序）时，起点相同的数只会出现一次，避免重复。加入不做此处理，比如：[1 1 2 5 6] target=8，其中，第一轮 i=0，选择 1，此轮的 dfs 继续，选择了 i=2 和 i=4，[1 2 5]。dfs 回溯到此轮，i=1 时继续搜索，还会得到 [1 2 5]。相邻重复元素作为起始 [1 1 ...]，后面部分是相同的，尽管 1 来自不同下标（0 和 1），但是结果是重复的。
