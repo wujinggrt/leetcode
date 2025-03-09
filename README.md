@@ -103,8 +103,108 @@ lower_bound，找到第一个不小于 target 的元素。upper_bound，找到�
 
 [py code](./py/0034.py)
 
-- [ ] 39
-- [ ] 40
+## 39 Combination sum：DFS 和状态转移
+
+给出不同数字，组合出和为 target 的组合。首先，考虑 DFS。**在 DFS 中，重点关注每轮需要什么状态，更新什么状态，判断什么情况终止**。每轮需要当前下标 i 和 target，代表以 i 出发，找到和为 target 的组合。随着搜索深入，不断更新下标和 target。target 为 0 即已经找到，便记录此路径。终止条件是 i 到了列表边界；或值已经超过 target，深入下去只会更大，必然不可能有解；或组合已经找到，再遍历下去只会更多。
+
+DFS 一般有两种形式，在函数首尾 append 和 pop。这种形式，第一次调用时不用预先加入第一个节点，直接代表以 i 为起点，找到和等于 target 的组合。
+
+```py
+    def _dfs(self, i: int, target: int):
+        """
+        以 i 为起点，找到和为 target 的组合。先判断是否满足条件，或是否不能搜索，即使 prune
+        """
+        if target == 0:
+            self._combinations.append(deepcopy(self._track))
+            return
+        self._track.append(self._candidates[i])
+        next_target = target - self._candidates[i]
+        for j, num in enumerate(self._candidates[i:], start=i):
+            if target < num: # 不可能存在，当前 num 也不满足
+                break
+            self._dfs(j, next_target)
+        self._track.pop()
+```
+
+注意，在调用 dfs 时，都需要遍历所有情况的 root，即：
+
+```py
+for i in veticies:
+    dfs(i, ...)
+```
+
+或在循环内 append 和 pop。这种形式需要先追加第一个 root 元素。似乎更快，简洁。
+
+```py
+class Solution:
+    def _dfs2(self, i: int, target: int):
+        """
+        以 i 为起点，找到和为 target 的组合。先判断是否满足条件，或是否不能搜索，即使 prune
+        """
+        if target == 0:
+            self._combinations.append(deepcopy(self._track))
+            return
+        # for j, num in enumerate(self._candidates[i:], start=i):
+        for j in range(i, len(self._candidates)):
+            num = self._candidates[j]
+            if num > target:
+                break # 不可能存在
+            self._track.append(num)
+            self._dfs2(j, target - num)
+            self._track.pop()
+
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        self._candidates = candidates
+        self._track = list()
+        self._combinations = list()
+        self._candidates.sort()
+        self._dfs2(0, target)
+        return self._combinations
+```
+
+但是本题可以多次使用一个元素，所以需要对 DFS 中寻找下一轮数做出调整。只需要再从当前 i 出发搜索，可以当做寻找重复的元素。即：
+
+```py
+        self._track.append(self._candidates[i])
+        for j in range(i, len(self._candidates)):
+            self._dfs(j, target - self._candidates[i])
+        self._track.pop()
+```
+
+假设，如果此题去掉不包含重复元素的限制，那么需要考虑**排除 DFS 重复项**：比如，[2 2 2 2] 中找到 target 为 4 的组合，自然是 [2 2]。简单的 DFS 会找到多组 [2 2]。所以，第一轮之后，要跳过重复元素。比如，i=0，已经选择了 nums[i] 和 nums[i+1]，如此 DFS 下去，便只会找到更多重复的。所以在第一轮 (nums[0], nums[1], ...) 序列搜索完成后，nums[1] 不能与 nums[0] 相等，否则重复序列了。所以需要找到两个不相等的序列。记录一下 previous 即可。具体参考 3 Sum 一题。
+
+## 40 Combination Sum II：包含重复数字，DFS
+
+不能重复使用同一个下标元素了，因为包含了重复数字。
+
+
+```py
+    def dfs(self, i: int, target: int):
+        if target == 0:
+            self.combinations.append(deepcopy(self.track))
+            return
+        previous = -1
+        for j, num in enumerate(self.candidates[i+1:], start=i+1):
+            if num > target:
+                break
+            if previous != -1 and num == self.candidates[previous]:
+                continue # duplicated
+            previous = j
+            self.track.append(num)
+            self.dfs(j, target - num)
+            self.track.pop()
+
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        self.candidates = candidates
+        self.candidates.sort()
+        self.track = list()
+        self.combinations = list()
+        self.dfs(-1, target)
+        return self.combinations
+```
+
+注意 dfs()，使用了 previous 变量，保障在重复元素相邻（有序）时，起点相同的数只会出现一次，避免重复。加入不做此处理，比如：[1 1 2 5 6] target=8，其中，第一轮 i=0，选择 1，此轮的 dfs 继续，选择了 i=2 和 i=4，[1 2 5]。dfs 回溯到此轮，i=1 时继续搜索，还会得到 [1 2 5]。相邻重复元素作为起始 [1 1 ...]，后面部分是相同的，尽管 1 来自不同下标（0 和 1），但是结果是重复的。
+
 - [ ] 41
 - [ ] 43
 - [ ] 44
