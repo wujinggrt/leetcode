@@ -24,6 +24,7 @@ class Standing:
         self.index_sums.remove(row + col)
 
 
+"""
 class Solution:
     def solveNQueens(self, n: int) -> list[list[str]]:
         boards: list[list[str]] = list()
@@ -47,3 +48,43 @@ class Solution:
             self.backtrack(boards, peaceStandings, standing, row + 1)
             peaceStandings[row] = -1
             standing.remove(row, col)
+"""
+
+class Solution:
+    def solveNQueens(self, n: int) -> list[list[str]]:
+        boards: list[list[str]] = list()
+        peaceStanding = [-1 for _ in range(n)]
+        standing = Standing()
+        self.probeWithBits(boards, peaceStanding, 0, 0, 0, 0)
+        return boards
+
+    def probeWithBits(
+        self,
+        boards: list[list[str]],
+        peaceStanding: list[int],
+        row: int,
+        columns: int,
+        diagonals: int,
+        antidiagonals: int,
+    ) -> None:
+        n = len(peaceStanding)
+        if row == n:
+            board = [
+                ["." if mark != i else "Q" for i in range(n)] for mark in peaceStanding
+            ]
+            boards.append(["".join(line) for line in board])
+            return
+        candidates = ((1 << n) - 1) & (~(columns | diagonals | antidiagonals))
+        while candidates != 0:
+            index = candidates & (-candidates)
+            candidates = candidates & (candidates - 1)
+            column = bin(index - 1).count("1")
+            peaceStanding[row] = column
+            self.probeWithBits(
+                boards,
+                peaceStanding,
+                row + 1,
+                columns | index,
+                (diagonals | index) << 1,
+                (antidiagonals | index) >> 1,
+            )
