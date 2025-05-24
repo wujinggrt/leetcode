@@ -12,16 +12,16 @@ class Solution {
     enum Direction { right = 0b1, down = 0b10, left = 0b100, up = 0b1000 };
     Direction direction = right;
     vector<int> spiral(matrix.size() * matrix[0].size());
-    int step = 0;
+    int num_visited = 0;
     for (int& element : spiral) {
-      ++step;
+      ++num_visited;
       element = matrix[i][j];
-      if (((direction & (right | left))) && (step == horizontal)) {
-        step = 0;
+      if (((direction & (right | left))) && (num_visited == horizontal)) {
+        num_visited = 0;
         direction = (Direction)((direction << 1) % 15);  // 8 % 7 == 1
         horizontal--;
-      } else if (((direction & (up | down))) && (step == vertical)) {
-        step = 0;
+      } else if (((direction & (up | down))) && (num_visited == vertical)) {
+        num_visited = 0;
         direction = (Direction)((direction << 1) % 15);
         vertical--;
       }
